@@ -1,11 +1,14 @@
 ## 目录
 <!-- MarkdownTOC depth=4 -->
 - [一 前言](#前言)
-- [二 LSD](#LSD)
-- [三 LSWMS](#LSWMS)
-- [四 EDline](#EDline)
-- [五 CannyLines](#CannyLines)
-- [六 MCMLSD](#MCMLSD)
+- [二 Hough_Line](#Hough)
+- [三 LSD](#LSD)
+- [四 FLD](#FLD)
+- [五 LSWMS](#LSWMS)
+- 六 [LSM](LSM)
+- [七 EDline](#EDline)
+- [八 CannyLines](#CannyLines)
+- [九 MCMLSD](#MCMLSD)
 
 <a name="前言"></a>
 
@@ -23,11 +26,31 @@
 
 
 
-本仓库主要借鉴参考[LineSegmentsDetection](https://github.com/Vincentqyw/LineSegmentsDetection)，在此基础上，增加自己的一些理解，主要介绍关于线段检测的一些算法汇总，请大家以论文与代码为主，如有不到之处，欢迎提交issue。
+本仓库主要借鉴参考[LineSegmentsDetection](https://github.com/Vincentqyw/LineSegmentsDetection)，以及博客[直线检测算法汇总](https://blog.csdn.net/WZZ18191171661/article/details/101116949#t9)，在此基础上，增加自己的一些理解，主要介绍关于线段检测的一些算法汇总，请大家以论文与代码为主，如有不到之处，欢迎提交issue。
+
+<a name="Hough"></a>
+
+## 二 Hough_Line
+
+Hough变换大家应该比较熟悉，主要用来进行直线、圆、椭圆检测等。
+
+实现步骤主要包括，[参考](https://blog.csdn.net/WZZ18191171661/article/details/101116949#t2)：
+
+1、首先，它创建一个二维数组或累加器（用于保存两个参数的值，并将其初始设置为零）；
+
+2、用r来表示行，用theta来表示列
+
+3、数组的大小取决于你所需要的精度。假设您希望角度的精度为1度，则需要180列（直线的最大度数为180）；
+
+4、对于r,可能的最大距离是图像的对角线长度。因此，取一个像素精度，行数可以是图像的对角线长度。
+
+当然，除了HoughLines，HoughLinesP是Hough_line算法的改进版，具有更快的速度和更好的效果。
+
+HoughLinesP不仅使用起来比较方便，基本上不需要进行调节参数，除此之外，该算法获得更好的直线检测效果。
 
 <a name="LSD"></a>
 
-## [二 LSD](http://www.ipol.im/pub/art/2012/gjmr-lsd/)
+## [三 LSD](http://www.ipol.im/pub/art/2012/gjmr-lsd/)
 
 - 论文标题："LSD: a Line Segment Detector"
 - 项目主页：http://www.ipol.im/pub/art/2012/gjmr-lsd/
@@ -36,17 +59,42 @@
 
 该方法是目前性价比（速度精度）最好的算法，现已经集成到`opencv`中[`LSDDetector`](https://docs.opencv.org/master/d1/dbd/classcv_1_1line__descriptor_1_1LSDDetector.html)。LSD能够在线性时间内检测到亚像素精度的线段。无需调整参数，适用于各种场景。因为每张图有误检，LSD能够控制误检率。PS：论文此处不介绍了，可以参考[这里](https://blog.csdn.net/chishuideyu/article/details/78081643?locationNum=9&fps=1)。
 
+缺点：它在背景含有一些白噪声的图像中容易失败，使得它不适合实时应用，参考[[线特征---EDLines原理](https://www.cnblogs.com/Jessica-jie/p/7655466.html)]
+
+
+
+<a name="FLD"></a>
+
+## 四 FLD 
+
+- 论文标题：“Outdoor Place Recognition in Urban Environments using Straight Lines”
+- 论文地址：http://cvlab.hanyang.ac.kr/~jwlim/files/icra14linerec.pdf
+
+该论文尝试着使用直线特征来代替原始的SURF点特征点进行建筑物识别。与点特征进行相比，线特征具有更容易发现和更好的鲁棒性，线特征基本上不会受到光照、遮挡、视角变化的影响。下面展示了该算法的直线检测效果，从图中我们可以看出，线特征比点特征更好一些。
+
 <a name="LSWMS"></a>
 
-## 三 LSWMS
+## 五 LSWMS
 
 - 论文标题："Line segment detection using weighted mean shift procedures on a 2D slice sampling strategy"
 - 论文地址：[https://www.researchgate.net/LSWMS.pdf](https://www.researchgate.net/profile/Marcos_Nieto3/publication/220654859_Line_segment_detection_using_weighted_mean_shift_procedures_on_a_2D_slice_sampling_strategy/links/56a5d56a08aef91c8c16b1ac.pdf?inViewer=0&origin=publication_detail&pdfJsDownload=0)
 - 代码地址：https://sourceforge.net/projects/lswms/
 
+
+
+##  六 LSM
+
+- 项目主页：http://faculty.pucit.edu.pk/nailah/research/LSM/
+- 论文地址：http://faculty.pucit.edu.pk/nailah/research/LSM/Line%20Segment%20Merging%20(LSM).pdf
+- [代码链接](http://faculty.pucit.edu.pk/nailah/research/LSM/LSM Demo.zip)
+
+ LSM算法不仅仅是一个直线检测算法，同时也是一个直线合并算法。论文中提出了一种合并这些断开的线段的算法，以恢复原始的感知准确的线段。该算法根据角度和空间接近度对线段进行分组。然后将每组中满足新的自适应合并准则的线段对依次合并成一条线段。重复此过程，直到不再合并行段。我们还提出了一种定量比较线段检测算法的方法。在york-urban数据集上的结果表明，与最新的线段检测算法相比，我们的合并线段更接近人类标记的地面真线段。
+
+**LSM可以将一些间断的直线合并成一条更长的直线，这在现实场景中具有很大的用处，但是我们也会发现LSM算法会错误的将一些直线进行合并，会造成一些误差。**
+
 <a name="EDline"></a>
 
-## 四 EDline（ED: Edge Drawing）
+## 七 EDline（ED: Edge Drawing）
 
 - 论文标题："Edge Drawing: A Combined Real-Time Edge and Segment Detector"
 - 论文地址：https://sci-hub.tw/10.1016/j.jvcir.2012.05.004
@@ -54,7 +102,7 @@
 
 <a name="CannyLines"></a>
 
-## [五 CannyLines](http://cvrs.whu.edu.cn/projects/cannyLines/)
+## [八 CannyLines](http://cvrs.whu.edu.cn/projects/cannyLines/)
 
 - 论文标题："CannyLines: A Parameter-Free Line Segment Detector"
 - 项目主页：http://cvrs.whu.edu.cn/projects/cannyLines/
@@ -65,7 +113,7 @@
 
 <a name="MCMLSD"></a>
 
-## 六 MCMLSD
+## 九 MCMLSD
 
 - 论文标题："MCMLSD: A Dynamic Programming Approach to Line Segment Detection"
 - 论文地址：http://openaccess.thecvf.com/content_cvpr_2017/papers/Almazan_MCMLSD_A_Dynamic_CVPR_2017_paper.pdf
