@@ -100,6 +100,11 @@ HoughLinesP不仅使用起来比较方便，基本上不需要进行调节参数
 - 论文地址：https://sci-hub.tw/10.1016/j.jvcir.2012.05.004
 - 代码地址：https://github.com/mtamburrano/LBD_Descriptor
 
+
+
+- 论文标题：“EDLines: A real-time line segment detector with a false detection control”
+- 论文地址：http://c-viz.eskisehir.edu.tr/pdfs/EDLines2011PRL.pdf
+
 <a name="CannyLines"></a>
 
 ## [八 CannyLines](http://cvrs.whu.edu.cn/projects/cannyLines/)
