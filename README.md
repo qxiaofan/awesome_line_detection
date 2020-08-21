@@ -5,7 +5,7 @@
 - [三 LSD](#LSD)
 - [四 FLD](#FLD)
 - [五 LSWMS](#LSWMS)
-- 六 [LSM](LSM)
+- [六 LSM](#LSM)
 - [七 EDline](#EDline)
 - [八 CannyLines](#CannyLines)
 - [九 MCMLSD](#MCMLSD)
